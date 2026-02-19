@@ -195,10 +195,68 @@ When matches are bucketed into quintiles by each signal, the actual home win rat
 
 ---
 
+## Elite Noise Coefficient Analysis
+
+**Can we extract a stronger signal by estimating what top managers own, rather than the full crowd?**
+
+### Approach
+
+No historical top-10k/100k manager data exists publicly — the FPL API only serves current-season data. To work around this, we used archived top-50K ownership data from [fplAnalytics](https://github.com/gpoudel/FPL-Analytics) (2018-19 season, GW1-23) to learn the **systematic distortion** between crowd ownership and elite ownership. This noise coefficient was then applied retroactively to all 9 seasons.
+
+**Calibration data:** 9,400 player-GW observations with both `selected_by_percent` (crowd) and `selected_by` (top-50K count).
+
+### The Distortion Curve
+
+Elite managers systematically deviate from the crowd:
+
+| Crowd Ownership | Elite/Crowd Ratio | Interpretation |
+|----------------|-------------------|----------------|
+| 0-1% | 0.37x | Elites ignore obscure players |
+| 1-5% | 0.47-0.55x | Elites under-weight low-ownership picks |
+| 5-10% | 0.63x | Moderate under-weighting |
+| 10-20% | 0.88x | Approaching parity |
+| 20-30% | **1.27x** | Elites over-weight consensus picks |
+| 30-50% | **1.47x** | Strong concentration in template |
+| 50%+ | 1.27x | Convergence at very high ownership |
+
+**Correlation** between crowd and elite ownership: r = 0.83. The mapping is non-linear — elites concentrate more heavily in proven picks while the crowd spreads ownership across many marginal players.
+
+**Stability check:** Mapping fitted on GW1-12 vs GW13-23 shows consistency at low-mid ownership (diff < 2%) but diverges at high ownership (diff ~16-18%), likely due to template shifts mid-season.
+
+![Elite Distortion Curve](charts/elite_distortion_curve.png)
+
+### Model Results with Elite Adjustment
+
+| Model | Test Brier | % of Odds Skill | BSS vs Odds |
+|-------|-----------|-----------------|-------------|
+| odds_only | 0.1853 | 100.0% | — |
+| crowd_fpl | 0.1949 | 68.1% | -5.18% |
+| **elite_fpl** | **0.1947** | **68.8%** | **-5.07%** |
+| crowd+odds | 0.1872 | 93.9% | -0.99% |
+| **elite+odds** | **0.1858** | **98.3%** | **-0.27%** |
+| all_features | 0.1874 | 93.1% | -1.12% |
+
+### Signal Properties
+
+Elite-adjusted signals correlate slightly less with odds (elite ownership: r=0.848 vs crowd: r=0.876), suggesting the adjustment introduces some independent variation. However, the elite and crowd signals remain very highly correlated with each other (r > 0.975), confirming that the adjustment is a modest recalibration rather than a fundamentally different signal.
+
+### Interpretation
+
+1. **`elite+odds` nearly matches odds-only** (98.3% of odds skill vs crowd+odds at 93.9%). The elite adjustment reduces the gap by ~75%, but the BSS is still negative (-0.27%), meaning elite FPL signals still don't add value over odds.
+
+2. **The distortion pattern is real but small.** Elite managers concentrate in template picks and avoid fringe players, but at the match-aggregation level this translates to a very modest signal improvement (Brier improvement of ~0.001).
+
+3. **The ceiling is visible.** Even with a perfect elite ownership proxy, the fundamental issue remains: FPL managers (elite or not) are processing the same public information as bookmakers. The 98.3% skill capture from `elite+odds` is close to the theoretical ceiling.
+
+4. **Live top-10k data may not justify the effort.** Given that our *estimated* elite signal only narrows the gap by ~0.7% skill points, the marginal value of building a live top-10k scraper for match betting is questionable. The bigger alpha opportunity may be in sub-markets (Clean Sheet, BTTS, Asian Handicap) where bookmaker efficiency is lower.
+
+---
+
 ## Potential Next Steps (if pursuing further)
 
 - Test DCS signal specifically against Over/Under and Clean Sheet markets (different odds, different efficiency)
-- Investigate Top 10K manager data (elite subset may contain stronger signal than the crowd)
+- **Build a live top-10k ownership scraper** — the noise coefficient suggests a small but real signal improvement; worth testing with actual live data against less efficient markets
 - Test captaincy concentration if real-time API data becomes available
 - Explore in-play FPL data (live point updates during matches) as a signal for live betting markets
 - Test Asian Handicap markets which may be less efficient than 1X2
+- **Cross-season validation** — test the noise coefficient on 2024-25 live data (fplAnalytics, LiveFPL) to confirm stability across seasons
