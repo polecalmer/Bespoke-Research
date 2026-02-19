@@ -252,10 +252,108 @@ Elite-adjusted signals correlate slightly less with odds (elite ownership: r=0.8
 
 ---
 
+## Expanded Signal Analysis: Mining Every Dimension of FPL Intuition
+
+### Why Expand?
+
+The original analysis used 5 hand-picked signals. But FPL data has 56 columns per player-GW. Every column captures a different facet of how managers see the game — their intuitions about team quality, attacking threat, defensive solidity, tactical composition, and momentum. We expanded from 5 to **24 signals** organized into four categories.
+
+### Signal Taxonomy
+
+**STOCK signals** — accumulated crowd belief:
+- Ownership ratio (price-weighted and raw), squad value ratio
+
+**FLOW signals** — active decisions this week:
+- Transfer ratio, transfer conviction (expensive buys), transfer intensity (active buying from small base), sell pressure, captain proxy, ownership velocity
+
+**QUALITY signals** — underlying performance from previous GW:
+- ICT threat/creativity/influence (weighted by current ownership), BPS quality, points momentum, minutes played, previous clean sheets, goals conceded
+
+**STRUCTURE signals** — tactical composition of crowd picks:
+- DEF/GK ratio, FWD ownership, MID ownership, premium (>8M) ratio, budget (<5M) ratio, selection concentration (HHI), star player dependence
+
+### Signal Independence from Odds
+
+The most important insight is which signals carry information that odds DON'T already capture:
+
+| Signal | Corr with Odds | Feature Importance | Interpretation |
+|--------|:---:|:---:|---|
+| points_momentum_ratio | **-0.001** | 0.046 | Recent form weighted by ownership — completely independent of odds |
+| minutes_ratio | 0.054 | 0.027 | Rotation/fitness information |
+| transfer_intensity_delta | 0.114 | 0.051 | Informed buying (high transfers relative to small ownership base) |
+| concentration_delta | -0.177 | 0.037 | How spread vs concentrated the crowd's picks are |
+| prev_clean_sheet_ratio | 0.161 | 0.008 | Recent defensive record |
+| defensive_strength_ratio | 0.200 | **0.059** | Goals conceded pattern (2nd highest FPL importance) |
+| star_dependence_delta | -0.132 | 0.039 | Reliance on few key players |
+
+For comparison, the original signals had correlations of 0.33-0.88 with odds — they were largely telling the model what odds already knew.
+
+### Model Results
+
+| Model | #Features | Test Brier | % of Odds Skill | BSS vs Odds |
+|-------|:---------:|-----------|:---------------:|-------------|
+| odds_only | 3 | 0.1853 | 100.0% | — |
+| original_5 | 5 | 0.1953 | 66.6% | -5.41% |
+| original_5+odds | 8 | 0.1872 | 93.7% | -1.02% |
+| **quality+odds** | **11** | **0.1869** | **94.6%** | **-0.87%** |
+| **structure+odds** | **10** | **0.1869** | **94.8%** | **-0.85%** |
+| all_fpl (24 FPL only) | 24 | 0.1941 | 70.7% | -4.76% |
+| all_fpl+odds | 27 | 0.1887 | 88.6% | -1.85% |
+| flow+quality+odds | 17 | 0.1874 | 93.2% | -1.11% |
+
+### What Each Category Captures Alone (no odds)
+
+| Category | % of Odds Skill | What It Tells Us |
+|----------|:-:|---|
+| **Structure** | **72.2%** | HOW the crowd composes their teams (positions, price tiers, concentration) captures the most football intuition |
+| Stock+Flow | 71.0% | WHO the crowd picks and HOW ACTIVELY (ownership + transfers) |
+| Stock | 70.7% | WHO the crowd picks (pure ownership) |
+| Quality+Structure | 70.3% | Performance metrics + tactical composition |
+| Quality | 59.4% | HOW players performed recently (ICT, BPS) — weakest alone |
+| Flow | 58.8% | Transfer activity alone — noisiest signal |
+
+**Key finding: Structure signals alone (72.2%) outperform the original 5 signals (66.6%).** The crowd's tactical choices — where they allocate across positions, whether they go premium or budget, how concentrated their picks are — carry more predictive information than raw ownership and transfers.
+
+### Feature Importance (all_fpl+odds model)
+
+Top 10 features by model coefficient magnitude:
+
+| Rank | Feature | Importance | Type |
+|:----:|---------|:----------:|------|
+| 1 | implied_prob_a | 0.165 | Odds |
+| 2 | implied_prob_h | 0.144 | Odds |
+| 3 | implied_prob_d | 0.085 | Odds |
+| 4 | **premium_ratio** | **0.061** | **Structure** |
+| 5 | **defensive_strength_ratio** | **0.059** | **Quality** |
+| 6 | **dcs_ratio** | **0.057** | **Structure** |
+| 7 | **transfer_intensity_delta** | **0.051** | **Flow** |
+| 8 | **points_momentum_ratio** | **0.046** | **Quality** |
+| 9 | sell_pressure_ratio | 0.041 | Flow |
+| 10 | star_dependence_delta | 0.039 | Structure |
+
+Structure and Quality signals dominate the top FPL features. The original transfer_ratio and ownership_ratio rank near the bottom (0.010 and 0.015).
+
+### Interpretation
+
+1. **The original 5 signals were the wrong 5.** Structure signals (72.2%) beat the original 5 (66.6%) at capturing football intuition. The crowd's *tactical composition* (position allocation, premium vs budget, star dependence) is more informative than raw ownership counts.
+
+2. **Quality signals add the most incremental value when combined with odds.** `quality+odds` (94.6% of odds skill) beats `original_5+odds` (93.7%). Previous-GW performance metrics (threat, influence, defensive record) contain information that partly survives odds-adjustment.
+
+3. **Points momentum is the "hidden gem."** It has ~zero correlation with odds (r=-0.001) but ranks 5th in feature importance. The crowd's ownership-weighted reaction to recent form captures something bookmakers don't directly price in — though not enough to create exploitable edge.
+
+4. **More features ≠ better.** `all_fpl+odds` (27 features, 88.6% skill) is WORSE than `quality+odds` (11 features, 94.6%). Regularization helps but can't fully compensate for noise from 24 noisy features.
+
+5. **The fundamental conclusion holds — but with more texture.** FPL signals still don't beat odds (best BSS = -0.85%), but we now understand WHY different dimensions of crowd behavior carry different amounts of information, and WHERE the independent signal lives (quality and structure, not raw ownership).
+
+![Expanded Model Comparison](charts/expanded_model_comparison.png)
+
+---
+
 ## Potential Next Steps (if pursuing further)
 
-- Test DCS signal specifically against Over/Under and Clean Sheet markets (different odds, different efficiency)
-- **Build a live top-10k ownership scraper** — the noise coefficient suggests a small but real signal improvement; worth testing with actual live data against less efficient markets
+- Test `quality+odds` and `structure+odds` specifically against Over/Under and Clean Sheet markets where bookmaker efficiency may be lower
+- **Build a live top-10k ownership scraper** — combine the noise coefficient with expanded signals for the most comprehensive FPL signal
+- Investigate `points_momentum_ratio` (near-zero odds correlation) as a standalone signal for live/in-play betting
 - Test captaincy concentration if real-time API data becomes available
 - Explore in-play FPL data (live point updates during matches) as a signal for live betting markets
 - Test Asian Handicap markets which may be less efficient than 1X2
