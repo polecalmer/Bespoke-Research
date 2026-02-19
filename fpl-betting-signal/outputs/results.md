@@ -349,8 +349,78 @@ Structure and Quality signals dominate the top FPL features. The original transf
 
 ---
 
+## Season-Long Markets: Feasibility Assessment
+
+### The Thesis
+
+FPL data may be better suited to **longer-duration markets** (league winner, top 4, relegation) than individual match outcomes. The reasoning:
+
+1. **Cumulative signal**: Week-by-week ownership drift compounds into a strong consensus about team quality trajectories — who's improving, who's collapsing. Individual match noise averages out.
+2. **Structural advantage**: FPL managers track *every* squad, *every* week. They notice when a promoted team's underlying numbers are better than their results suggest, or when a top-4 team's key player is declining. This "distributed scouting network" effect is strongest for season-arc questions.
+3. **Less efficient markets**: Outright/futures markets are updated less frequently and may be less efficiently priced than match 1X2 odds. Market makers focus attention on high-volume match betting.
+4. **Natural FPL signal alignment**: FPL ownership naturally reflects season-long questions — managers pick players they think will perform for weeks, not just one match. Transfer behavior reflects medium-term conviction about team trajectories.
+
+### Historical Futures Odds Data: Sources Identified
+
+We researched whether downloadable historical data exists for EPL season-long betting markets (league winner, top 4, relegation). Here is what exists:
+
+| Source | Markets | Seasons | Format | Cost | In-Season Snapshots? |
+|--------|---------|---------|--------|------|---------------------|
+| **SportsOddsHistory.com** | Winner (outright), Relegation, Season points | ~2013-14 onward | HTML tables (scrapable) | Free | Yes — multiple snapshots per season |
+| **Betfair Historical Data** | Winner (outright), all Exchange markets | May 2016 onward | JSON (Exchange stream format) | Free tier (basic) / Paid (advanced) | Yes — continuous price data |
+| **The Odds API** | Outrights (futures) | June 2020 onward | JSON API | Paid ($20+/mo) | Yes — 5-10 min snapshots |
+| **Compare.bet** | Winner (outright) | Current + recent seasons | Web display | Free | Yes — tracks odds movement |
+| **OddsPortal** | Winner, possibly relegation | ~2003-04 onward | Web (scrapable) | Free | Browseable, not bulk download |
+| **Odds Warehouse** | Match odds (possibly futures) | 2010-2025 | CSV | Paid | Unknown |
+
+### Best Path Forward
+
+**SportsOddsHistory.com is the most promising free source.** The site archives EPL futures odds across multiple markets and seasons, with URL patterns that are systematic and scrapable:
+
+- **Winner (outright)**: `sportsoddshistory.com/soccer-main/?y={SEASON}&sa=soccer&a=epl&b=two&o=t`
+- **Relegation**: `sportsoddshistory.com/soccer-main/?y={SEASON}&sa=soccer&a=epl&b=rel&o=t`
+- **Season points**: `sportsoddshistory.com/soccer-win/?y={SEASON}&sa=soccer&t=pts&o=t`
+
+Confirmed available seasons include at least 2014-15 through 2022-23, with pages linking forward/backward through seasons. The data includes **in-season snapshots** (not just preseason), which is critical — it lets us compare how futures odds evolve vs how FPL signals evolve across a season.
+
+**Betfair Exchange Historical Data** is the premium alternative — continuous price data from May 2016 onward, including the EPL outright winner market. The free tier provides last-traded-price at 1-minute intervals (no volume data). Paid tiers add full depth-of-book and volume.
+
+### Proposed Season-Arc Analysis
+
+If we obtain the futures odds data (via scraping SportsOddsHistory or Betfair free tier), the analysis would be:
+
+1. **Build cumulative FPL season-arc signals** at key checkpoints (GW5, GW10, GW15, GW20, GW25, GW30):
+   - Cumulative ownership trajectory per team (trend slope)
+   - Transfer momentum over rolling 5-GW windows
+   - Structure signal evolution (are elite managers shifting toward/away from a team?)
+   - Points-weighted ownership drift
+
+2. **Compare to futures odds movement** at the same checkpoints:
+   - Do FPL signals lead or lag futures odds adjustments?
+   - When FPL ownership diverges from futures-implied probability, who's right?
+
+3. **Specific testable hypotheses**:
+   - **Relegation**: FPL managers start dumping players from teams headed for relegation before odds adjust (because they need to transfer them out to avoid point losses)
+   - **Top 4 race**: Ownership concentration in a team's attacking assets predicts top-4 finish probability better than mid-season odds
+   - **Title race**: Transfer velocity toward a title contender's players during a winning run predicts whether the run is "real" (underlying quality) or a blip
+
+4. **Key advantage over match-level analysis**: We're no longer asking "does FPL predict the next match?" (where odds are very efficient). We're asking "does FPL crowd behavior reflect medium-term team quality trajectories that futures markets are slow to price in?" — a fundamentally different and more plausible question.
+
+### Data Overlap Assessment
+
+Our 9-season FPL dataset (2016-17 to 2024-25) overlaps with:
+- **SportsOddsHistory**: ~8 seasons of overlap (2016-17 to 2023-24, possibly 2024-25)
+- **Betfair Exchange**: ~8 seasons of overlap (May 2016 onward)
+- **The Odds API**: ~4 seasons of overlap (2020-21 onward)
+
+This gives us enough data for a meaningful study, especially since each season produces 20 teams × 6 checkpoints = 120 team-checkpoint observations.
+
+---
+
 ## Potential Next Steps (if pursuing further)
 
+- **Scrape SportsOddsHistory.com** for EPL outright winner and relegation odds across 2016-17 to 2024-25 — build season-arc FPL signals and test against futures odds evolution
+- **Download Betfair Exchange free tier data** for EPL outright winner market — continuous price data for comparison
 - Test `quality+odds` and `structure+odds` specifically against Over/Under and Clean Sheet markets where bookmaker efficiency may be lower
 - **Build a live top-10k ownership scraper** — combine the noise coefficient with expanded signals for the most comprehensive FPL signal
 - Investigate `points_momentum_ratio` (near-zero odds correlation) as a standalone signal for live/in-play betting
