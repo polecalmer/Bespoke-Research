@@ -1,0 +1,6 @@
+# Raw data (too large for git, re-downloadable via 01_fetch_data.py)
+data/raw/
+
+# Python cache
+__pycache__/
+*.pyc
