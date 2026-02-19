@@ -72,6 +72,22 @@ Five FPL-derived features computed per match:
 
 A BSS > 0 would indicate FPL adds value. Both validation and test BSS are negative.
 
+### Does FPL at least compete with odds?
+
+FPL-Only is genuinely informative — it captures **72.4% of the predictive skill** that Odds-Only achieves over a naive baseline:
+
+| Model | Brier (Test) | Skill vs Naive |
+|-------|-------------|----------------|
+| Naive (base rates) | 0.2154 | — |
+| FPL-Only | 0.1938 | 10.0% |
+| Odds-Only | 0.1856 | 13.8% |
+| Raw Market Odds | 0.1853 | 14.0% |
+
+- FPL-Only and Odds-Only **agree on the match favorite 87.8% of the time** and their P(Home) predictions correlate at r=0.879.
+- When they disagree (93 out of 760 matches), **neither has an edge** — FPL-Only is correct 35.5% of the time vs Odds-Only at 36.6%.
+- FPL's weakest area is **draw prediction** (Brier 0.180 vs naive 0.177 — worse than guessing base rates), while odds handle draws well (0.176).
+- FPL crowd wisdom is a solid ~72% approximation of bookmaker knowledge, but the missing ~28% (draw pricing, precise calibration) is exactly where the money is.
+
 ![Brier Score Comparison](charts/04_brier_comparison.png)
 
 ![Calibration Plot](charts/03_calibration_plot.png)
