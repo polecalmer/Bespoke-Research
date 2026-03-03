@@ -1,0 +1,420 @@
+{
+  "crowd_accuracy": {
+    "metrics": {
+      "Naive (base rates)": {
+        "brier": 0.215377,
+        "log_loss": 1.067143,
+        "accuracy": 0.434211,
+        "bss_vs_naive": 0.0
+      },
+      "Home-bias": {
+        "brier": 0.215377,
+        "log_loss": 1.067143,
+        "accuracy": 0.434211,
+        "bss_vs_naive": 0.0
+      },
+      "FPL Crowd (5 signals)": {
+        "brier": 0.193843,
+        "log_loss": 1.073173,
+        "accuracy": 0.557895,
+        "bss_vs_naive": 0.099982
+      },
+      "Bookmaker (Bet365)": {
+        "brier": 0.185336,
+        "log_loss": 0.939901,
+        "accuracy": 0.564474,
+        "bss_vs_naive": 0.13948
+      },
+      "Odds Model (calibrated)": {
+        "brier": 0.185627,
+        "log_loss": 0.944032,
+        "accuracy": 0.559211,
+        "bss_vs_naive": 0.138128
+      }
+    },
+    "bootstrap_bss": {
+      "Naive (base rates)": {
+        "mean": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0
+      },
+      "Home-bias": {
+        "mean": 0.0,
+        "ci_lower": 0.0,
+        "ci_upper": 0.0
+      },
+      "FPL Crowd (5 signals)": {
+        "mean": 0.10006,
+        "ci_lower": 0.064894,
+        "ci_upper": 0.135393
+      },
+      "Bookmaker (Bet365)": {
+        "mean": 0.139608,
+        "ci_lower": 0.10823,
+        "ci_upper": 0.170137
+      },
+      "Odds Model (calibrated)": {
+        "mean": 0.137979,
+        "ci_lower": 0.102833,
+        "ci_upper": 0.172685
+      }
+    },
+    "crowd_pct_of_odds_skill": 71.682113,
+    "base_rates": [
+      0.326173,
+      0.226655,
+      0.447172
+    ]
+  },
+  "agreement_analysis": {
+    "n_total": 760,
+    "n_agree": 671,
+    "n_disagree": 89,
+    "agree_pct": 88.289474,
+    "agree_accuracy_fpl": 0.588674,
+    "agree_accuracy_odds": 0.588674,
+    "disagree_accuracy_fpl": 0.325843,
+    "disagree_accuracy_odds": 0.382022,
+    "contingency": {
+      "both_right": 395,
+      "fpl_only_right": 29,
+      "odds_only_right": 34,
+      "both_wrong": 302
+    },
+    "mcnemar_p": 0.614295,
+    "disagree_brier_fpl": 0.234115,
+    "disagree_brier_odds": 0.220215,
+    "fisher_crowd_vs_chance_p": 0.598846
+  },
+  "crowd_confidence": {
+    "fpl_ece": 0.036348,
+    "odds_ece": 0.036552,
+    "fpl_calibration": {
+      "fraction_of_positives": [
+        0.16129,
+        0.142857,
+        0.3125,
+        0.423469,
+        0.566667,
+        0.618182,
+        0.8
+      ],
+      "mean_predicted": [
+        0.055046,
+        0.180898,
+        0.319613,
+        0.434021,
+        0.560689,
+        0.679758,
+        0.769625
+      ]
+    },
+    "odds_calibration": {
+      "fraction_of_positives": [
+        0.038462,
+        0.141593,
+        0.295597,
+        0.442424,
+        0.56391,
+        0.663462,
+        0.792453,
+        1.0
+      ],
+      "mean_predicted": [
+        0.095232,
+        0.188199,
+        0.317998,
+        0.433231,
+        0.559849,
+        0.685863,
+        0.801224,
+        0.883258
+      ]
+    },
+    "quintile_accuracy": {
+      "Q1\n(least\nconfident)": 0.407895,
+      "Q2": 0.480263,
+      "Q3": 0.611842,
+      "Q4": 0.592105,
+      "Q5\n(most\nconfident)": 0.697368
+    },
+    "confidence_accuracy_correlation": {
+      "spearman_rho": 0.9,
+      "p_value": 0.037386
+    }
+  },
+  "season_arc_bootstrap": {
+    "top4": {
+      "GW10": {
+        "n_test": 40,
+        "n_positive": 8,
+        "brier_baseline": 0.057446,
+        "brier_combined": 0.072078,
+        "improvement_pct": -25.470709,
+        "bootstrap": {
+          "baseline_ci": [
+            0.022647,
+            0.101319
+          ],
+          "combined_ci": [
+            0.024254,
+            0.130448
+          ],
+          "improvement_ci": [
+            -159.2903,
+            43.692679
+          ],
+          "prob_combined_better": 0.2622
+        },
+        "permutation_p_value": 0.043
+      },
+      "GW15": {
+        "n_test": 40,
+        "n_positive": 8,
+        "brier_baseline": 0.049208,
+        "brier_combined": 0.059283,
+        "improvement_pct": -20.47482,
+        "bootstrap": {
+          "baseline_ci": [
+            0.011843,
+            0.095518
+          ],
+          "combined_ci": [
+            0.016565,
+            0.113653
+          ],
+          "improvement_ci": [
+            -176.788345,
+            43.7412
+          ],
+          "prob_combined_better": 0.298
+        },
+        "permutation_p_value": 0.335
+      },
+      "GW20": {
+        "n_test": 40,
+        "n_positive": 8,
+        "brier_baseline": 0.027794,
+        "brier_combined": 0.02534,
+        "improvement_pct": 8.832194,
+        "bootstrap": {
+          "baseline_ci": [
+            0.009172,
+            0.051236
+          ],
+          "combined_ci": [
+            0.006416,
+            0.052376
+          ],
+          "improvement_ci": [
+            -144.249556,
+            68.50876
+          ],
+          "prob_combined_better": 0.6074
+        },
+        "permutation_p_value": 0.0
+      },
+      "GW25": {
+        "n_test": 40,
+        "n_positive": 8,
+        "brier_baseline": 0.025331,
+        "brier_combined": 0.020281,
+        "improvement_pct": 19.936841,
+        "bootstrap": {
+          "baseline_ci": [
+            0.00811,
+            0.047401
+          ],
+          "combined_ci": [
+            0.003188,
+            0.045749
+          ],
+          "improvement_ci": [
+            -61.684536,
+            80.400766
+          ],
+          "prob_combined_better": 0.7137
+        },
+        "permutation_p_value": 0.0
+      },
+      "GW30": {
+        "n_test": 40,
+        "n_positive": 8,
+        "brier_baseline": 0.030528,
+        "brier_combined": 0.028667,
+        "improvement_pct": 6.095174,
+        "bootstrap": {
+          "baseline_ci": [
+            0.009799,
+            0.057041
+          ],
+          "combined_ci": [
+            0.003908,
+            0.069167
+          ],
+          "improvement_ci": [
+            -118.340917,
+            79.106861
+          ],
+          "prob_combined_better": 0.5876
+        },
+        "permutation_p_value": 0.0
+      }
+    },
+    "relegated": {
+      "GW10": {
+        "n_test": 40,
+        "n_positive": 6,
+        "brier_baseline": 0.062261,
+        "brier_combined": 0.077008,
+        "improvement_pct": -23.684548,
+        "bootstrap": {
+          "baseline_ci": [
+            0.022075,
+            0.113936
+          ],
+          "combined_ci": [
+            0.02729,
+            0.139016
+          ],
+          "improvement_ci": [
+            -68.415545,
+            7.134093
+          ],
+          "prob_combined_better": 0.0632
+        },
+        "permutation_p_value": 0.15
+      },
+      "GW15": {
+        "n_test": 40,
+        "n_positive": 6,
+        "brier_baseline": 0.04234,
+        "brier_combined": 0.032588,
+        "improvement_pct": 23.032871,
+        "bootstrap": {
+          "baseline_ci": [
+            0.013118,
+            0.082383
+          ],
+          "combined_ci": [
+            0.015047,
+            0.053854
+          ],
+          "improvement_ci": [
+            -93.503524,
+            63.193371
+          ],
+          "prob_combined_better": 0.7053
+        },
+        "permutation_p_value": 0.0085
+      },
+      "GW20": {
+        "n_test": 40,
+        "n_positive": 6,
+        "brier_baseline": 0.030699,
+        "brier_combined": 0.024621,
+        "improvement_pct": 19.798565,
+        "bootstrap": {
+          "baseline_ci": [
+            0.010471,
+            0.056208
+          ],
+          "combined_ci": [
+            0.007266,
+            0.04831
+          ],
+          "improvement_ci": [
+            -29.942599,
+            60.450364
+          ],
+          "prob_combined_better": 0.7836
+        },
+        "permutation_p_value": 0.0165
+      },
+      "GW25": {
+        "n_test": 40,
+        "n_positive": 6,
+        "brier_baseline": 0.02476,
+        "brier_combined": 0.036918,
+        "improvement_pct": -49.106819,
+        "bootstrap": {
+          "baseline_ci": [
+            0.006088,
+            0.051848
+          ],
+          "combined_ci": [
+            0.007371,
+            0.079813
+          ],
+          "improvement_ci": [
+            -72.267162,
+            -5.055851
+          ],
+          "prob_combined_better": 0.0188
+        },
+        "permutation_p_value": 0.493
+      },
+      "GW30": {
+        "n_test": 40,
+        "n_positive": 6,
+        "brier_baseline": 0.015063,
+        "brier_combined": 0.019386,
+        "improvement_pct": -28.697574,
+        "bootstrap": {
+          "baseline_ci": [
+            0.005074,
+            0.027066
+          ],
+          "combined_ci": [
+            0.005191,
+            0.037081
+          ],
+          "improvement_ci": [
+            -107.52825,
+            33.035849
+          ],
+          "prob_combined_better": 0.1917
+        },
+        "permutation_p_value": 0.252
+      }
+    },
+    "loso_cv": {
+      "top4": {
+        "baseline_mean": 0.05108,
+        "baseline_std": 0.021815,
+        "combined_mean": 0.037772,
+        "combined_std": 0.015236,
+        "n_folds": 15
+      },
+      "relegated": {
+        "baseline_mean": 0.05052,
+        "baseline_std": 0.04055,
+        "combined_mean": 0.050656,
+        "combined_std": 0.04204,
+        "n_folds": 15
+      }
+    }
+  },
+  "information_content": {
+    "outcome_entropy_bits": 1.531767,
+    "signals_mi": {
+      "implied_prob_h": 0.133324,
+      "implied_prob_a": 0.130822,
+      "ownership_ratio": 0.106917,
+      "odds_model_prediction": 0.081027,
+      "fpl_model_prediction": 0.074388,
+      "dcs_ratio": 0.065143,
+      "transfer_ratio": 0.053738,
+      "velocity_delta": 0.034327,
+      "captain_proxy": 0.033813,
+      "implied_prob_d": 0.027329
+    },
+    "conditional_mi_fpl_given_odds": 0.034316,
+    "mean_prediction_entropy": {
+      "fpl": 1.334979,
+      "odds": 1.383109,
+      "naive": 1.531767
+    },
+    "fpl_mi_as_pct_of_odds": 91.806436
+  }
+}

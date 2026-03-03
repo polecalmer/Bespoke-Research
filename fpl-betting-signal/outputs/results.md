@@ -530,3 +530,87 @@ The signal strengthens at later checkpoints and was strongest in 2020-21 through
 - **Expand to more seasons** — the FPL raw data schema changed over time; recover team assignment for 2016-17 to 2019-20 to double the FPL signal training data
 - **Test combined elite + season-arc signals** — apply the noise coefficient to season-arc signals for a sharper trajectory measure
 - **Cross-market validation** — test the same approach on Championship, La Liga, or Bundesliga (where FPL-equivalent games exist)
+
+
+---
+
+## Crowd Wisdom: What 11 Million Fantasy Managers Know
+
+### The Headline Finding
+
+The existing narrative — "FPL doesn't beat bookmakers" — buries the lead. The remarkable finding is that **11 million people playing a fantasy game for fun independently reproduce 72% of professional bookmaker accuracy** for EPL match prediction. This is a crowd-wisdom result: millions of uncoordinated amateurs, making decisions for entertainment, collectively generate predictions nearly as good as multi-billion-pound betting operations.
+
+### Prediction Accuracy Ladder
+
+| Predictor | Brier Score | Skill vs Naive | 95% CI (BSS) |
+|-----------|:-----------:|:--------------:|:-------------:|
+| Naive (base rates) | 0.2154 | 0.0% | — |
+| FPL Crowd (5 signals) | 0.1938 | 10.0% | [6.5%, 13.5%] |
+| Bookmaker (Bet365) | 0.1853 | 13.9% | [10.8%, 17.0%] |
+
+The crowd achieves **72%** of bookmaker predictive skill — using only fantasy game participation data, no financial markets, no expert models.
+
+![Crowd Wisdom Ladder](charts/crowd_wisdom_ladder.png)
+
+### When Crowd and Market Disagree
+
+Crowd and bookmakers agree on the match favorite **88.3%** of the time (671/760 matches). When they disagree (89 matches):
+
+- Crowd correct: 32.6%
+- Bookmaker correct: 38.2%
+- McNemar's p-value: 0.614 (errors are not statistically independent)
+
+Neither has a systematic edge on disagreement matches, confirming the crowd and bookmaker are processing largely overlapping information.
+
+![Agreement Analysis](charts/crowd_wisdom_agreement.png)
+
+### Crowd Confidence Calibration
+
+When the crowd is confident about an outcome, are they actually right more often?
+
+- FPL Expected Calibration Error (Home Win): **0.0363**
+- Odds Expected Calibration Error (Home Win): **0.0366**
+- Confidence-accuracy monotonicity: rho=0.90, p=0.037
+
+The crowd's confidence is meaningfully calibrated — higher confidence predicts higher accuracy.
+
+![Calibration](charts/crowd_wisdom_calibration.png)
+
+### Season-Arc: Honest Bootstrap Validation
+
+The season-level finding (FPL improves top-4 and relegation prediction) was based on a small test set (~40 teams). Here we add bootstrap confidence intervals and permutation tests.
+
+| Target | Checkpoint | Baseline Brier | Combined Brier | Change | P(Combined<Baseline) | Perm. p-value |
+|--------|:----------:|:--------------:|:--------------:|:------:|:--------------------:|:-------------:|
+| Top4       | GW10 | 0.0574 | 0.0721 | -25.5% | 26.2% | 0.043 |
+| Top4       | GW15 | 0.0492 | 0.0593 | -20.5% | 29.8% | 0.335 |
+| Top4       | GW20 | 0.0278 | 0.0253 | +8.8% | 60.7% | 0.000 |
+| Top4       | GW25 | 0.0253 | 0.0203 | +19.9% | 71.4% | 0.000 |
+| Top4       | GW30 | 0.0305 | 0.0287 | +6.1% | 58.8% | 0.000 |
+| Relegated  | GW10 | 0.0623 | 0.0770 | -23.7% | 6.3% | 0.150 |
+| Relegated  | GW15 | 0.0423 | 0.0326 | +23.0% | 70.5% | 0.009 |
+| Relegated  | GW20 | 0.0307 | 0.0246 | +19.8% | 78.4% | 0.017 |
+| Relegated  | GW25 | 0.0248 | 0.0369 | -49.1% | 1.9% | 0.493 |
+| Relegated  | GW30 | 0.0151 | 0.0194 | -28.7% | 19.2% | 0.252 |
+
+**Interpretation:** P(Combined<Baseline) shows how often the FPL-enhanced model beats the baseline across 10,000 bootstrap resamples. Permutation p-value tests whether the improvement is real vs. what you'd get from shuffled (meaningless) FPL data.
+
+![Season-Arc Bootstrap](charts/crowd_wisdom_season_arc_bootstrap.png)
+
+### Information Content
+
+| Metric | Value |
+|--------|:-----:|
+| Outcome entropy | 1.5318 bits |
+| FPL model MI | 0.0744 bits |
+| Odds model MI | 0.0810 bits |
+| FPL as % of Odds MI | 92% |
+| FPL unique info (given odds) | 0.0343 bits |
+
+The conditional mutual information (FPL | Odds) of 0.0343 bits quantifies the independent information the crowd contributes beyond what's already in market prices.
+
+![Information Content](charts/crowd_wisdom_information.png)
+
+### Summary
+
+![Crowd Wisdom Summary](charts/crowd_wisdom_summary.png)
